@@ -13,7 +13,7 @@ Nada de build: é HTML estático, sobe em qualquer host (Netlify, Vercel, GitHub
 
 ```
 .
-├── index.html            ← TOTEM (resolve em /) — autocontido, roda offline
+├── index.html            ← TOTEM (resolve em /) — carrega ./vendor e ./assets (sem CDN)
 ├── vendor/               ← libs locais do totem (sem depender de CDN)
 │   ├── vue.global.prod.js
 │   └── lottie.min.js
@@ -39,7 +39,27 @@ Nada de build: é HTML estático, sobe em qualquer host (Netlify, Vercel, GitHub
 
 **GitHub Pages:** Settings → Pages → branch `main`, pasta `/ (root)`. Totem em `.../` e página em `.../links/`. Com domínio próprio: `https://SEU-DOMINIO/` e `https://SEU-DOMINIO/links`.
 
-> O totem **não depende de internet/CDN**: o Vue e o lottie-web ficam em `/vendor` e todos os assets estão embutidos no `index.html`. Ideal para totem em rede fechada.
+> O totem **não depende de CDN**: o Vue e o lottie-web ficam em `/vendor` e os assets (imagens + Lotties) em `/assets`. Tudo local — ideal para totem em rede fechada. Como o `index.html` busca os assets por caminho relativo, **sirva a pasta por HTTP** (qualquer host estático já faz isso).
+
+### Rodar localmente
+Não abra o `index.html` por duplo-clique (o `file://` bloqueia o carregamento dos assets). Suba um servidor simples na raiz:
+
+```bash
+python3 -m http.server 8080      # ou:  npx serve .
+# abra http://localhost:8080/  (totem)  e  http://localhost:8080/links/
+```
+
+### Subir no git (recomendado em vez do "upload files" da web)
+O uploader web do GitHub costuma falhar (HTTP 503) com muitos arquivos/binários. Pelo terminal é à prova de falha:
+
+```bash
+git init
+git add .
+git commit -m "Totem + /links"
+git branch -M main
+git remote add origin https://github.com/SEU-USUARIO/SEU-REPO.git
+git push -u origin main
+```
 
 ---
 
